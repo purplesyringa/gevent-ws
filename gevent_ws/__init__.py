@@ -70,23 +70,19 @@ class WebSocket:
 
 
     def receive(self):
+        if not self._queue.empty():
+            return self.receive_nowait()
         if isinstance(self._receive_error, EOFError):
             return None
         if self._receive_error:
             raise self._receive_error
-        ret = self._queue.get()
-        if isinstance(self._receive_error, EOFError):
-            return None
-        if self._receive_error:
-            raise self._receive_error
-        return ret
+        self._queue.peek()
+        return self.receive_nowait()
 
 
     def receive_nowait(self):
         ret = self._queue.get_nowait()
-        if isinstance(self._receive_error, EOFError):
-            return None
-        if self._receive_error:
+        if self._receive_error and not isinstance(self._receive_error, EOFError):
             raise self._receive_error
         return ret
 
