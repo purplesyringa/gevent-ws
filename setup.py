@@ -1,0 +1,15 @@
+from setuptools import find_packages, setup
+
+
+setup(
+    name="gevent-ws",
+    version="1.0.0",
+    description="Websocket server for gevent.pywsgi",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    author="Ivanq",
+    python_requires=">=3",
+    url="https://github.com/imachug/gevent-ws",
+    packages=find_packages(),
+    license="MIT"
+)
