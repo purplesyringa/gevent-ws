@@ -29,7 +29,7 @@ class WebSocket:
         self.status = None
         self._receive_error = None
         self._queue = Queue()
-        self.max_length = 1024 * 1024
+        self.max_length = 10 * 1024 * 1024
         gevent.spawn(self._listen)
 
 

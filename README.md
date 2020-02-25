@@ -125,6 +125,11 @@ Sends a message to the other party. `message` can be either `str` or `bytes`. Ma
 Closes the websocket. Status `1000` (the default one) means that the connection is closed cleanly. Check [RFC](https://tools.ietf.org/html/rfc6455#section-7.4) for more status codes.
 
 
+### `gevent_ws.WebSocket.set_max_message_length(length)`
+
+Set maximum incoming message size (in bytes). 10 MiB is the default value.
+
+
 ### `gevent_ws.WebSocket.closed`
 
 A boolean showing whether the connection is closed (by any of the two parties) or is being closed.
