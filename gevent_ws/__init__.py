@@ -148,7 +148,7 @@ class WebSocket:
             self._error(STATUS_TOO_LONG)
 
         mask = self._recv_exactly(4)
-        payload = self.socket.recv(payload_length)
+        payload = self._recv_exactly(payload_length)
         payload = self._unmask(payload, mask)
 
         return payload, opcode, fin
