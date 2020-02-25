@@ -63,16 +63,20 @@ class WebSocket:
                     except UnicodeDecodeError:
                         self._error(STATUS_DATA_ERROR)
                 self._queue.put(message)
-        except BaseException as e:
+        except Exception as e:
             self.closed = True
             self._receive_error = e
             self._queue.put(None)  # To make sure the error is read
 
 
     def receive(self):
+        if isinstance(self._receive_error, EOFError):
+            return None
         if self._receive_error:
             raise self._receive_error
         ret = self._queue.get()
+        if isinstance(self._receive_error, EOFError):
+            return None
         if self._receive_error:
             raise self._receive_error
         return ret
@@ -80,6 +84,8 @@ class WebSocket:
 
     def receive_nowait(self):
         ret = self._queue.get_nowait()
+        if isinstance(self._receive_error, EOFError):
+            return None
         if self._receive_error:
             raise self._receive_error
         return ret
@@ -175,14 +181,15 @@ class WebSocket:
         for i in range(0, len(data), SEND_PACKET_SIZE):
             part = data[i:i + SEND_PACKET_SIZE]
             fin = int(i == (len(data) - 1) // SEND_PACKET_SIZE * SEND_PACKET_SIZE)
-            self.socket.send(bytes(
+            header = bytes(
                 [
-                    opcode | (fin << 7),
+                    (opcode if i == 0 else 0) | (fin << 7),
                     min(len(part), 126)
-                ] + (
-                    struct.pack("!H", len(part)) if len(part) >= 126 else []
-                )
-            ) + part)
+                ]
+            )
+            if len(part) >= 126:
+                header += struct.pack("!H", len(part))
+            self.socket.sendall(header + part)
 
 
     def _error(self, status):
@@ -212,9 +219,6 @@ class WebSocketHandler(WSGIHandler):
             # Not my problem
             return super(WebSocketHandler, self).handle_one_response()
 
-        if "HTTP_SEC_WEBSOCKET_KEY" not in self.environ:
-            self.start_response("400 Bad Request", [])
-            return
         if "HTTP_SEC_WEBSOCKET_KEY" not in self.environ:
             self.start_response("400 Bad Request", [])
             return

@@ -107,12 +107,12 @@ You get this object by accessing `wsgi.websocket` property of the environment ob
 
 ### `gevent_ws.WebSocket.receive()`
 
-Waits for a message and returns it, either as `str` or `bytes`. Blocks. May raise `EOFError` if the connection is closed or an `OSError` if the socket can't be read from.
+Waits for a message and returns it, either as `str` or `bytes`. Blocks. May return `None` if the connection is closed or an `OSError` if the socket can't be read from.
 
 
 ### `gevent_ws.WebSocket.receive_nowait()`
 
-Returns the message if it's available (the format is the same as in `receive()`) or `None` if no message is in the queue. May raise `EOFError` or `OSError` (see `receive()`).
+Returns the message if it's available (the format is the same as in `receive()`) or `None` if no message is in the queue. May return `None` or raise `OSError` (see `receive()`).
 
 
 ### `gevent_ws.WebSocket.send(message)`
