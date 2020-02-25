@@ -40,10 +40,11 @@ from gevent_ws import WebSocketHandler
 
 def app(env, start_response):
     ws = env["wsgi.websocket"]
-    while not ws.closed:
+    while True:
         msg = ws.receive()
-        if msg is not None:
-            ws.send(msg)
+        if msg is None:
+            break
+        ws.send(msg)
     return [b"Bye"]
 
 
@@ -62,11 +63,11 @@ from gevent_ws import WebSocketHandler
 def app(env, start_response):
     if "wsgi.websocket" in env:
         ws = env["wsgi.websocket"]
-        while not ws.closed:
+        while True:
             msg = ws.receive()
-            if msg is not None:
-                print(msg)
-                ws.send(msg)
+            if msg is None:
+                break
+            ws.send(msg)
         return [b"Bye"]
     else:
         start_response("200 OK", [
