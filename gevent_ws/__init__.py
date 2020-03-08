@@ -211,7 +211,7 @@ class WebSocketHandler(WSGIHandler):
 
 
         http_connection = [s.strip() for s in self.environ.get("HTTP_CONNECTION", "").split(",")]
-        if "Upgrade" not in http_connection or self.environ.get("HTTP_UPGRADE", "") != "websocket":
+        if "upgrade" not in http_connection.lower() or self.environ.get("HTTP_UPGRADE", "") != "websocket":
             # Not my problem
             return super(WebSocketHandler, self).handle_one_response()
 
