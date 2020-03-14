@@ -23,9 +23,8 @@ STATUS_TOO_LONG = 1009
 
 
 class WebSocket:
-    def __init__(self, socket, handler):
+    def __init__(self, socket):
         self.socket = socket
-        self._handler = handler
         self.closed = False
         self.status = None
         self._receive_error = None
@@ -196,7 +195,6 @@ class WebSocket:
 
     def close(self, status=STATUS_OK):
         self.closed = True
-        self._handler.close_connection = True
         self._send_frame(OPCODE_CLOSE, struct.pack("!H", status))
         self.socket.close()
 
@@ -233,7 +231,7 @@ class WebSocketHandler(WSGIHandler):
             ("Sec-Websocket-Accept", accept)
         ])(b"")
 
-        self.environ["wsgi.websocket"] = WebSocket(self.socket, self)
+        self.environ["wsgi.websocket"] = WebSocket(self.socket)
 
         # Can't call super because it sets invalid flags like "status"
         try:
@@ -256,3 +254,8 @@ class WebSocketHandler(WSGIHandler):
         finally:
             self.time_finish = time.time()
             self.log_request()
+
+
+    def process_result(self):
+        if "wsgi.websocket" not in self.environ:
+            super(WebSocketHandler, self).process_result()
