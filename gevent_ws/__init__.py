@@ -259,3 +259,10 @@ class WebSocketHandler(WSGIHandler):
     def process_result(self):
         if "wsgi.websocket" not in self.environ:
             super(WebSocketHandler, self).process_result()
+
+    @property
+    def version(self):
+        if not self.environ:
+            return
+
+        return self.environ.get('HTTP_SEC_WEBSOCKET_VERSION')
