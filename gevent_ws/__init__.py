@@ -263,6 +263,6 @@ class WebSocketHandler(WSGIHandler):
     @property
     def version(self):
         if not self.environ:
-            return
+            return None
 
         return self.environ.get('HTTP_SEC_WEBSOCKET_VERSION')
