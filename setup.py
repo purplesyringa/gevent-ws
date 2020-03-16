@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="gevent-ws",
-    version="2.0.4",
+    version="2.0.5",
     description="Websocket server for gevent.pywsgi",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
