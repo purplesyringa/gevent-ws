@@ -23,8 +23,12 @@ STATUS_TOO_LONG = 1009
 
 
 class WebSocket:
-    def __init__(self, socket):
+    def __init__(self, socket, environ):
         self.socket = socket
+        self.version = environ.get("HTTP_SEC_WEBSOCKET_VERSION", None)
+        self.path = environ.get("PATH_INFO", None)
+        self.origin = environ.get("HTTP_ORIGIN", None)
+        self.protocol = environ.get("HTTP_SEC_WEBSOCKET_PROTOCOL", None)
         self.closed = False
         self.status = None
         self._receive_error = None
@@ -234,7 +238,7 @@ class WebSocketHandler(WSGIHandler):
             ("Sec-Websocket-Accept", accept)
         ])(b"")
 
-        self.environ["wsgi.websocket"] = WebSocket(self.socket)
+        self.environ["wsgi.websocket"] = WebSocket(self.socket, self.environ)
 
         # Can't call super because it sets invalid flags like "status"
         try:
@@ -267,11 +271,3 @@ class WebSocketHandler(WSGIHandler):
                 pass
         else:
             super(WebSocketHandler, self).process_result()
-
-
-    @property
-    def version(self):
-        if not self.environ:
-            return None
-
-        return self.environ.get('HTTP_SEC_WEBSOCKET_VERSION')
